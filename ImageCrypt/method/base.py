@@ -2,6 +2,7 @@ import sys
 import time
 from abc import ABCMeta, abstractmethod
 from PIL import Image
+from ImageCrypt.logger import LoggerFactory
 
 
 class BaseImageCrypt(object):
@@ -10,11 +11,14 @@ class BaseImageCrypt(object):
 
     def __init__(self, path, data):
         self._image = Image.open(path)
+        self._logger = LoggerFactory.create_logger(self.__class__.__name__)
         if self._image.format not in ["PNG", "TTIF"]:
-            print("Invalid image format: {0:s}".format(self._image.format))
+            self._logger.error(
+                "Invalid image format: {0:s}".format(self._image.format)
+            )
             sys.exit(1)
         if self._image.width < 20 or self._image.height < 20:
-            print("Invalid image size! Minimum is 20x20 pixels.")
+            self._logger.error("Invalid image size! Minimum is 20x20 pixels.")
             sys.exit(1)
         self._data = data
         self._extension = self._image.format.lower()
@@ -23,7 +27,8 @@ class BaseImageCrypt(object):
         elif self._image.mode in ["RGBA", "CMYK"]:
             self.lsbs = 4
         else:
-            raise RuntimeError("Unsupported image color mode!")
+            self._logger.error("Unsupported image color mode!")
+            sys.exit(1)
 
     @abstractmethod
     def encrypt(self):
@@ -49,6 +54,9 @@ class BaseImageCrypt(object):
         path = "{0:s}/encrypted.{1:s}".format(
             directory,
             self._extension,
+        )
+        self._logger.info(
+            "Saving image under path: {0:s}".format(path)
         )
         self._image.save(
             path,

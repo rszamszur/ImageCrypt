@@ -20,5 +20,8 @@ class DecodeTextData(BaseData):
         pass
 
     def save(self):
+        self._logger.info(
+            "Saving saving decrypted data under path: {0:s}".format(self._path)
+        )
         with open(self._path, "w+") as f:
             f.write(self.data)

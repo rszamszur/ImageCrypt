@@ -1,4 +1,6 @@
 import click
+from logging import DEBUG, INFO
+from ImageCrypt.logger import LoggerFactory
 from .commands.encrypt import encrypt
 from .commands.decrypt import decrypt
 
@@ -13,7 +15,10 @@ from .commands.decrypt import decrypt
 )
 def cli(**options):
     """Choose action Encrypt or Decrypt"""
-    pass
+    if options['verbose']:
+        LoggerFactory.level = DEBUG
+    else:
+        LoggerFactory.level = INFO
 
 
 cli.add_command(encrypt)

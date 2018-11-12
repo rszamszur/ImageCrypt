@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from ImageCrypt.logger import LoggerFactory
 
 
 class BaseData(object):
@@ -9,6 +10,7 @@ class BaseData(object):
         self._path = path
         self._binary = None
         self._data = None
+        self._logger = LoggerFactory.create_logger(self.__class__.__name__)
 
     @property
     def path(self):

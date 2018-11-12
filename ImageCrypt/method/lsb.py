@@ -33,6 +33,7 @@ class LSBImageCrypt(BaseImageCrypt):
         self.end_pixel = None
 
     def _get_header(self):
+        self._logger.info("Reading headers.")
         hl = self._calculate_header_len()
         self.header = []
 
@@ -78,8 +79,22 @@ class LSBImageCrypt(BaseImageCrypt):
             ),
             self.header_map['b2c'][ec],
         )
+        self._logger.debug(
+            "Start pixel x: {0:d}, y: {1:d}".format(
+                self.start_pixel.x,
+                self.start_pixel.y,
+            )
+        )
+        self._logger.debug(
+            "End pixel x: {0:d}, y: {1:d}, color: {2:d}".format(
+                self.end_pixel.x,
+                self.end_pixel.y,
+                self.end_pixel.color,
+            )
+        )
 
     def _set_header(self):
+        self._logger.info("Generating headers.")
         hl = self._calculate_header_len()
         start_pixel = namedtuple("StartPixel", "x y")
         sx = (hl / self.lsbs) + 1
@@ -120,9 +135,24 @@ class LSBImageCrypt(BaseImageCrypt):
         hs = list(
             "{0:s}{1:s}{2:s}{3:s}{4:s}".format(h_sx, h_sy, h_ex, h_ey, h_pc)
         )
+        self._logger.debug(
+            "Start pixel x: {0:s}, y: {1:s}".format(
+                h_sx,
+                h_sy,
+            )
+        )
+        self._logger.debug(
+            "End pixel x: {0:s}, y: {1:s}, color: {2:s}".format(
+                h_ex,
+                h_ey,
+                h_pc,
+            )
+        )
         self.header = [hs[i:i + self.lsbs] for i in range(0, len(hs), self.lsbs)]
+        self._logger.debug("Generated Headers: {0:s}".format(self.header))
 
     def _calculate_header_len(self):
+        self._logger.info("Calculating headers length.")
         x_len = self.header_map['vbs'][len(str(self._image.width))]
         y_len = self.header_map['vbs'][len(str(self._image.height))]
         return (2 * x_len) + (2 * y_len) + 2
@@ -140,6 +170,7 @@ class LSBImageCrypt(BaseImageCrypt):
         return value & 1
 
     def encrypt(self):
+        self._logger.info("Begin encrypting {0:s}".format(self._data.path))
         self._set_header()
         self._data.validate(
             self._image.size,
@@ -149,6 +180,7 @@ class LSBImageCrypt(BaseImageCrypt):
 
         x = 0
         y = 0
+        self._logger.info("Encrypting headers into image.")
 
         while len(self.header) > 0:
             colors = []
@@ -168,6 +200,7 @@ class LSBImageCrypt(BaseImageCrypt):
         x = self.start_pixel.x
         y = self.start_pixel.y
         data = self._data.binary.group_bits(self.lsbs)
+        self._logger.info("Encrypting data into image.")
 
         while len(data) > 0:
             colors = []
@@ -189,14 +222,16 @@ class LSBImageCrypt(BaseImageCrypt):
                 if y == self._image.height:
                     raise RuntimeError("End of image!")
 
-        print(
-            "Message successfully encrypted! Ending point: {0:d},{1:d}".format(
-                x,
-                y,
-            )
+        self._logger.info("Message successfully encrypted.")
+        self._logger.debug(
+            "Ending point: {0:d},{1:d}".format(x, y)
         )
 
     def decrypt(self):
+        self._logger.info("Begin decrypting {0:s}.".format(
+                self._image.filename
+            )
+        )
         self._get_header()
         x = self.start_pixel.x
         y = self.start_pixel.y
@@ -211,8 +246,6 @@ class LSBImageCrypt(BaseImageCrypt):
             if x == self._image.width - 1:
                 x = 0
                 y += 1
-                if y == self._image.height:
-                    raise RuntimeError("End of image!")
 
             if x == self.end_pixel.x and y == self.end_pixel.y:
                 if self.end_pixel.color != 0:
@@ -225,5 +258,6 @@ class LSBImageCrypt(BaseImageCrypt):
 
                 break
 
+        self._logger.info("Data successfully decrypted.")
         self._data.binary.bits = bits
         self._data.save()
