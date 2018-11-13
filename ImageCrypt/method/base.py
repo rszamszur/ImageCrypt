@@ -1,5 +1,4 @@
 import sys
-import time
 from abc import ABCMeta, abstractmethod
 from PIL import Image
 from ImageCrypt.logger import LoggerFactory

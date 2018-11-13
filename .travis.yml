@@ -11,18 +11,20 @@ install:
 jobs:
   include:
     - stage: metrics
-      name: "style_guide_PEB8"
+      name: "Style Guide PEB8"
       python: "2.7"
-      script: flake8 --select=E,W,I,T --tee --output-file=pep8_violations.txt --statistics --count setup.py ImageCrypt
+      script: flake8 --select=E,W,I,T --tee --statistics --count setup.py ImageCrypt
     - stage: metrics
-      name: "style_guide_PEB257"
+      name: "Style Guide PEB257"
       python: "2.7"
-      script: flake8 --select=D --tee --output-file=pep257_violations.txt --statistics --count setup.py ImageCrypt
+      script: flake8 --select=D --tee --statistics --count setup.py ImageCrypt
     - stage: metrics
-      name: "code_errors"
+      name: "Code Errors"
       python: "2.7"
-      script: flake8 --select=F --tee --output-file=flake8_code_errors.txt --statistics --count setup.py ImageCrypt
+      script: flake8 --select=F --tee --statistics --count setup.py ImageCrypt
     - stage: metrics
-      name: "code_complexity"
+      name: "Code Complexity"
       python: "2.7"
-      script: flake8 --select=C901 --tee --output-file=code_complexity.txt --count
+      script: flake8 --select=C901 --tee --count
+  allow_failures:
+    - name: "Style Guide PEB257"
