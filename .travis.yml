@@ -15,13 +15,13 @@ jobs:
       name: "style_guide"
       python: "2.7"
       script:
-        - flake8 --select=E,W,I,T --tee --output-file=pep8_violations.txt --statistics --count setup.py ImageCrypt
-        - flake8 --select=D --tee --output-file=pep257_violations.txt --statistics --count setup.py ImageCrypt
-    - stage: metrics
-      name: "code_errors"
+        flake8 --select=E,W,I,T --tee --output-file=pep8_violations.txt --statistics --count setup.py ImageCrypt;
+        flake8 --select=D --tee --output-file=pep257_violations.txt --statistics --count setup.py ImageCrypt
+    - name: "code_errors"
       python: "2.7"
       script: flake8 --select=F --tee --output-file=flake8_code_errors.txt --statistics --count setup.py ImageCrypt
-    - stage: metrics
-      name: "code_complexity"
+    - name: "code_complexity"
       python: "2.7"
       script: flake8 --select=C901 --tee --output-file=code_complexity.txt --count
+  allow_failures:
+    - name: "style_guide"
