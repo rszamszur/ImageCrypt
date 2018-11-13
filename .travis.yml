@@ -9,7 +9,6 @@ install:
   - pip install .
 stages:
   - metrics
-script: echo "Running build"
 jobs:
   allow_failures:
     - stage: metrics
