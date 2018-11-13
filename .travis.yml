@@ -25,5 +25,3 @@ jobs:
       name: "code_complexity"
       python: "2.7"
       script: flake8 --select=C901 --tee --output-file=code_complexity.txt --count
-  allow_failures:
-    - name: "style_guide"
