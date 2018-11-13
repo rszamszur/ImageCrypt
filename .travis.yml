@@ -7,8 +7,6 @@ install:
   - pip install flake8-import-order
   - pip install flake8-todo
   - pip install .
-stages:
-  - metrics
 jobs:
   inclue:
     - stage: metrics
@@ -17,9 +15,9 @@ jobs:
       script: flake8 --select=E,W,I,T --tee --output-file=pep8_violations.txt --statistics --count setup.py ImageCrypt && flake8 --select=D --tee --output-file=pep257_violations.txt --statistics --count setup.py ImageCrypt
     - name: "code_errors"
       python: "2.7"
-      script: flake8 --select=F --tee --output-file=flake8_code_errors.txt --statistics --count setup.py ImageCrypt
+      script: flake8 --select=F --tee --statistics --count setup.py ImageCrypt
     - name: "code_complexity"
       python: "2.7"
-      script: flake8 --select=C901 --tee --output-file=code_complexity.txt --count
+      script: flake8 --select=C901 --tee --count
   allow_failures:
     - name: "style_guide"
