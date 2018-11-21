@@ -11,6 +11,9 @@ class LoggerFactory(object):
 
     @classmethod
     def create_logger(cls, name):
+        loggers = getLogger().manager.loggerDict
+        if name in loggers:
+            return loggers[name]
         formatter = Formatter(
             "%(asctime)s %(levelname)8s: %(name)s: %(message)s",
             "%Y-%m-%d %H:%M:%S",
