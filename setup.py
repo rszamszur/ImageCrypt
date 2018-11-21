@@ -35,6 +35,7 @@ setup(
 
     install_requires=[
         'click>=6.6',
+        'Pillow>=5.3.0',
         'six>=1.11.0',
     ],
 
