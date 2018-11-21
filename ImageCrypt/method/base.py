@@ -7,6 +7,7 @@ from ImageCrypt.logger import LoggerFactory
 class BaseImageCrypt(object):
 
     __metaclass__ = ABCMeta
+    verify = None
 
     def __init__(self, path, data):
         self._image = Image.open(path)
@@ -28,6 +29,7 @@ class BaseImageCrypt(object):
         else:
             self._logger.error("Unsupported image color mode!")
             sys.exit(1)
+        self._output_path = None
 
     @abstractmethod
     def encrypt(self):
@@ -36,6 +38,14 @@ class BaseImageCrypt(object):
     @abstractmethod
     def decrypt(self):
         pass
+
+    @property
+    def verify(self):
+        return self.verify
+
+    @property
+    def output_path(self):
+        return self._output_path
 
     @property
     def data(self):
@@ -50,14 +60,14 @@ class BaseImageCrypt(object):
         #     time.time(),
         #     self._extension,
         # )
-        path = "{0:s}/encrypted.{1:s}".format(
+        self._output_path = "{0:s}/encrypted.{1:s}".format(
             directory,
             self._extension,
         )
         self._logger.info(
-            "Saving image under path: {0:s}".format(path)
+            "Saving image under path: {0:s}".format(self._output_path)
         )
         self._image.save(
-            path,
+            self._output_path,
             format=self._image.format
         )

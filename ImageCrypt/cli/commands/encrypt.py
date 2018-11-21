@@ -1,19 +1,23 @@
 import click
+from ImageCrypt.method.base import BaseImageCrypt
 from ImageCrypt.method.lsb import LSBImageCrypt
+from ImageCrypt.method.verify import VerifyImageCrypt
 from ImageCrypt.data.encrypt.text import EncodeTextData
 from ImageCrypt.data.encrypt.file import EncodeFileData
 
 
 @click.group()
 @click.option(
-    "--run-check",
+    "--verify/--skip-verify",
     help="Transaction check to make sure nothing went wrong.",
-    is_flag=True,
-    default=False,
+    default=True,
 )
 def encrypt(**options):
     """Encrypt data into image."""
-    pass
+    if options['verify']:
+        BaseImageCrypt.verify = True
+    else:
+        BaseImageCrypt.verify = False
 
 
 @encrypt.command()
@@ -84,3 +88,11 @@ def file(**options):
     )
     image.encrypt()
     image.save(options['save_dir'])
+    if image.verify:
+        verify = VerifyImageCrypt(
+            image_path=image.output_path,
+            data_path=options['file'],
+            data_type="file",
+        )
+        verify.verify()
+        verify.cleanup()
