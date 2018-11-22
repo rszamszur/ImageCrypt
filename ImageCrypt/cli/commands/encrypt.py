@@ -19,6 +19,7 @@ from ImageCrypt.data.factory import DataFactory
 def encrypt(**options):
     """Encrypt data into image."""
     BaseImageCrypt.verify = options['verify']
+    BaseImageCrypt.add_noise = options['add_noise']
 
 
 @encrypt.command()

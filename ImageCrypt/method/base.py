@@ -7,7 +7,8 @@ from ImageCrypt.logger import LoggerFactory
 class BaseImageCrypt(object):
 
     __metaclass__ = ABCMeta
-    verify = None
+    _verify = None
+    _add_noise = None
 
     def __init__(self, path, data):
         self._image = Image.open(path)
@@ -42,6 +43,18 @@ class BaseImageCrypt(object):
     @property
     def verify(self):
         return self.verify
+
+    @verify.setter
+    def verify(self, value):
+        self._verify = value
+
+    @property
+    def add_noise(self):
+        return self.add_noise
+
+    @add_noise.setter
+    def add_noise(self, value):
+        self._add_noise = value
 
     @property
     def output_path(self):

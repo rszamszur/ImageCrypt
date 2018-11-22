@@ -1,3 +1,4 @@
+import random
 from collections import namedtuple
 from ImageCrypt.method.base import BaseImageCrypt
 
@@ -226,6 +227,28 @@ class LSBImageCrypt(BaseImageCrypt):
         self._logger.debug(
             "Ending point: {0:d},{1:d}".format(x, y)
         )
+
+        if self.add_noise:
+            self._logger.info("Filling rest image with random noise.")
+
+            while True:
+                colors = []
+
+                for color in self._image.getpixel((x, y)):
+                    color = self._set_lsb(
+                        color,
+                        random.randint(0, 1),
+                    )
+                    colors.append(color)
+
+                self._image.putpixel((x, y), tuple(colors))
+
+                x += 1
+                if x == self._image.width - 1:
+                    x = 0
+                    y += 1
+                    if y == self._image.height:
+                        break
 
     def decrypt(self):
         self._logger.info("Begin decrypting {0:s}.".format(
