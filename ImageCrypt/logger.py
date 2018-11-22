@@ -7,7 +7,15 @@ from logging import (
 
 class LoggerFactory(object):
 
-    level = None
+    _level = None
+
+    @property
+    def level(self):
+        return self.level
+
+    @level.setter
+    def level(self, value):
+        self._level = value
 
     @classmethod
     def create_logger(cls, name):
