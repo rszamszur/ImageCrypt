@@ -2,8 +2,7 @@ import click
 from ImageCrypt.method.base import BaseImageCrypt
 from ImageCrypt.method.lsb import LSBImageCrypt
 from ImageCrypt.method.verify import VerifyImageCrypt
-from ImageCrypt.data.encrypt.text import EncodeTextData
-from ImageCrypt.data.encrypt.file import EncodeFileData
+from ImageCrypt.data.factory import DataFactory
 
 
 @click.group()
@@ -12,12 +11,14 @@ from ImageCrypt.data.encrypt.file import EncodeFileData
     help="Transaction check to make sure nothing went wrong.",
     default=True,
 )
+@click.option(
+    "--add-noise/--no-noise",
+    help="Fill remaining pixels with random bit in order to harden detection.",
+    default=True,
+)
 def encrypt(**options):
     """Encrypt data into image."""
-    if options['verify']:
-        BaseImageCrypt.verify = True
-    else:
-        BaseImageCrypt.verify = False
+    BaseImageCrypt.verify = options['verify']
 
 
 @encrypt.command()
@@ -49,7 +50,11 @@ def encrypt(**options):
 def text(**options):
     image = LSBImageCrypt(
         path=options['path'],
-        data=EncodeTextData(options['text']),
+        data=DataFactory.create(
+            action="encrypt",
+            data_type="text",
+            path=options['text'],
+        ),
     )
     image.encrypt()
     image.save(options['save_dir'])
@@ -84,7 +89,11 @@ def text(**options):
 def file(**options):
     image = LSBImageCrypt(
         path=options['path'],
-        data=EncodeFileData(options['file']),
+        data=DataFactory.create(
+            action="encrypt",
+            data_type="file",
+            path=options['file'],
+        ),
     )
     image.encrypt()
     image.save(options['save_dir'])

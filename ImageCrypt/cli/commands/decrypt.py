@@ -1,8 +1,7 @@
 from six import text_type
 import click
 from ImageCrypt.method.lsb import LSBImageCrypt
-from ImageCrypt.data.decrypt.text import DecodeTextData
-from ImageCrypt.data.decrypt.file import DecodeFileData
+from ImageCrypt.data.factory import DataFactory
 
 
 @click.group()
@@ -44,7 +43,11 @@ def text(**options):
     )
     image = LSBImageCrypt(
         path=options['path'],
-        data=DecodeTextData(path),
+        data=DataFactory.create(
+            action="decrypt",
+            data_type="text",
+            path=path,
+        ),
     )
     image.decrypt()
     image.data.save()
@@ -83,6 +86,10 @@ def file(**options):
     )
     image = LSBImageCrypt(
         path=options['path'],
-        data=DecodeFileData(path),
+        data=DataFactory.create(
+            action="decrypt",
+            data_type="file",
+            path=path,
+        ),
     )
     image.decrypt()

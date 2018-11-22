@@ -3,10 +3,10 @@ import shutil
 import time
 import hashlib
 import sys
-from ImageCrypt.data.decrypt.text import DecodeTextData
-from ImageCrypt.data.decrypt.file import DecodeFileData
+from ImageCrypt.data.factory import DataFactory
 from ImageCrypt.method.lsb import LSBImageCrypt
 from ImageCrypt.logger import LoggerFactory
+
 
 class VerifyImageCrypt(object):
 
@@ -20,8 +20,10 @@ class VerifyImageCrypt(object):
             time.time(),
             self._data_path.split(".")[-1],
         )
-        self._data = DecodeFileData(
-            self._temp_file
+        self._data = DataFactory.create(
+            action="decrypt",
+            data_type=data_type,
+            path=self._temp_file,
         )
         self._image = LSBImageCrypt(
             image_path,
