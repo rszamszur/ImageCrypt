@@ -6,6 +6,8 @@ from ImageCrypt.method.base import BaseImageCrypt
 class LSBImageCrypt(BaseImageCrypt):
 
     def __init__(self, path, data):
+        """vbs - value bit size - depending on image width how many bits TLV
+        header value will have."""
         super(LSBImageCrypt, self).__init__(
             path,
             data,
